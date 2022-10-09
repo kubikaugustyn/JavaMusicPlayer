@@ -5,6 +5,9 @@ import cz.jakubaugustyn.javamusicplayer.YtMP3.InvalidVideoInfoException;
 import cz.jakubaugustyn.javamusicplayer.YtMP3.VideoInfo;
 import cz.jakubaugustyn.javamusicplayer.window.MainWindow;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Main {
     public static void main(String[] args) {
         System.out.println("Hello world!");

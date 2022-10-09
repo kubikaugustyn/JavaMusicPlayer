@@ -4,22 +4,25 @@ import org.jetbrains.annotations.NotNull;
 import org.json.*;
 
 public class Info {
+    public JSONObject object;
+    public String jsonString;
 
     public Info() {
 
     }
 
     public final @NotNull VideoInfo getVideoInfo(@NotNull String id, @NotNull String country) throws InvalidVideoInfoException {
-        JSONObject object;
+        this.object=null;
+        this.jsonString="";
         try {
             NewpRequest request = new NewpRequest(id, country);
-            String jsonString = request.post();
-            object = new JSONObject(jsonString);
+            this.jsonString = request.post();
+            this.object = new JSONObject(this.jsonString);
         } catch (Exception ex) {
             throw new InvalidVideoInfoException();
         }
         VideoInfo info = new VideoInfo();
-        info.setStatus(object.getInt("status"));
+        info.setStatus(this.object.getInt("status"));
         info.setMessage(object.getString("message"));
         if (info.getStatus() == 1) {
             VideoInfoData data = new VideoInfoData();

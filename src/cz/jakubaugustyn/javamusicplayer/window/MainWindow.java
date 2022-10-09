@@ -11,10 +11,10 @@ public class MainWindow extends Window {
     private SearchWindow searchWindow;
 
     public MainWindow() {
-        super(Properties.name, false);
+        super(Properties.mainWindowName, false);
 
         this.search = new PlaceholderTextField("");
-        this.search.setPlaceholder("Search...");
+        this.search.setPlaceholder(Properties.searchFieldPlaceholder);
 
         this.searchWindow = new SearchWindow(this);
         this.build();
