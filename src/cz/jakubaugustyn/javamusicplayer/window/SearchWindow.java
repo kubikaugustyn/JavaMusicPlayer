@@ -2,19 +2,21 @@ package cz.jakubaugustyn.javamusicplayer.window;
 
 import cz.jakubaugustyn.javamusicplayer.Properties;
 import cz.jakubaugustyn.javamusicplayer.YtMP3.Info;
-import cz.jakubaugustyn.javamusicplayer.YtMP3.InvalidVideoInfoException;
 import cz.jakubaugustyn.javamusicplayer.YtMP3.VideoInfo;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 public class SearchWindow extends Window implements ActionListener {
+    private JMenuBar menuBar;
+    private final Border border = BorderFactory.createLineBorder(Color.black);
     private PlaceholderTextField search;
     private MainWindow parent;
 
@@ -35,7 +37,12 @@ public class SearchWindow extends Window implements ActionListener {
         if (this.window != null) {
             Container container = this.window.getContentPane();
             this.search.addActionListener(this);
-            container.add(this.search, BorderLayout.CENTER);
+            this.menuBar = new JMenuBar();
+            this.menuBar.setOpaque(true);
+            this.menuBar.setBorder(this.border);
+            this.menuBar.setBackground(new Color(127, 127, 127));
+            this.menuBar.add(this.search, BorderLayout.CENTER);
+            container.add(this.menuBar);
 
             JLabel textLabel = new JLabel("I'm a label in the search window", SwingConstants.LEFT);
             textLabel.setVerticalAlignment(SwingConstants.CENTER);
@@ -57,18 +64,6 @@ public class SearchWindow extends Window implements ActionListener {
         }
     }
 
-    public String getVideoIdFromYoutubeUrl(String url) {
-        // https://stackoverflow.com/questions/24048308/how-to-get-the-video-id-from-a-youtube-url-with-regex-in-java
-        String videoId = null;
-        String regex = "http(?:s)?:\\/\\/(?:m.)?(?:www\\.)?youtu(?:\\.be\\/|be\\.com\\/(?:watch\\?(?:feature=youtu.be\\&)?v=|v\\/|embed\\/|user\\/(?:[\\w#]+\\/)+))([^&#?\\n]+)";
-        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(url);
-        if (matcher.find()) {
-            videoId = matcher.group(1);
-        }
-        return videoId;
-    }
-
     public final void search(@NotNull String text) {
         this.search.setText(text);
         this.search.setFocusable(false);
@@ -80,21 +75,18 @@ public class SearchWindow extends Window implements ActionListener {
             this.setVisible(true);
             System.out.println("Search: " + text);
 
-            String videoId = this.getVideoIdFromYoutubeUrl(text);
-            if (videoId == null && text.length() == 11) videoId = text;
-            if (videoId != null && videoId.length() == 11) {
+            try {
                 //Search
                 try {
                     Info info = new Info();
-                    VideoInfo videoInfo = info.getVideoInfo(videoId != null ? videoId : text, Properties.country);
+                    VideoInfo videoInfo = info.getVideoInfo(text, Properties.country);
                     this.onSearch(videoInfo);
-                } catch (InvalidVideoInfoException e) {
+                } catch (Exception e) {
                     this.onSearchFail("Video info exception!", e);
-                } catch (Exception ex) {
-                    this.onSearchFail("Another exception!", ex);
+                    throw new Exception(); // To go to "Not a video ID"
                 }
                 //Search End
-            } else {
+            } catch (Exception ignored) {
                 // Later
                 this.onSearchFail("Not a video id", null);
             }
@@ -122,8 +114,8 @@ public class SearchWindow extends Window implements ActionListener {
 
     @Override
     public void onResize(Dimension screenSize) {
-        if (this.search != null) {
-            this.search.setSize(new Dimension(screenSize.width / (this.fullscreen ? 1 : 2), 30));
+        if (this.menuBar != null) {
+            this.menuBar.setSize(new Dimension(screenSize.width / (this.fullscreen ? 1 : 2), 30));
         }
     }
 }

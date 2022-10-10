@@ -1,12 +1,8 @@
 package cz.jakubaugustyn.javamusicplayer;
 
 import cz.jakubaugustyn.javamusicplayer.YtMP3.Info;
-import cz.jakubaugustyn.javamusicplayer.YtMP3.InvalidVideoInfoException;
 import cz.jakubaugustyn.javamusicplayer.YtMP3.VideoInfo;
 import cz.jakubaugustyn.javamusicplayer.window.MainWindow;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Main {
     public static void main(String[] args) {
@@ -15,13 +11,14 @@ public class Main {
         try {
             Info info = new Info();
             VideoInfo videoInfo = info.getVideoInfo("MzYZSooe6pM", "CZ");
-            System.out.println(videoInfo.getData().getTitle());
-        } catch (InvalidVideoInfoException e) {
+            if (videoInfo.getStatus() == 1) {
+                System.out.println("Loaded video: " + videoInfo.getData().getTitle());
+            } else {
+                System.out.println("Video status: " + videoInfo.getStatus() + ", message: " + videoInfo.getMessage());
+            }
+        } catch (Exception e) {
             System.out.println("Video info exception!");
             System.out.println(e);
-        } catch (Exception ex) {
-            System.out.println("Another exception!");
-            System.out.println(ex);
         }
     }
 }

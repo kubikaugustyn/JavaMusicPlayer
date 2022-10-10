@@ -3,30 +3,29 @@ package cz.jakubaugustyn.javamusicplayer.YtMP3;
 import org.jetbrains.annotations.NotNull;
 import org.json.*;
 
+import java.io.IOException;
+
 public class Info {
     public JSONObject object;
     public String jsonString;
+    public VideoInfo info;
 
     public Info() {
 
     }
 
-    public final @NotNull VideoInfo getVideoInfo(@NotNull String id, @NotNull String country) throws InvalidVideoInfoException {
-        this.object=null;
-        this.jsonString="";
-        try {
-            NewpRequest request = new NewpRequest(id, country);
-            this.jsonString = request.post();
-            this.object = new JSONObject(this.jsonString);
-        } catch (Exception ex) {
-            throw new InvalidVideoInfoException();
-        }
-        VideoInfo info = new VideoInfo();
-        info.setStatus(this.object.getInt("status"));
-        info.setMessage(object.getString("message"));
-        if (info.getStatus() == 1) {
+    public final @NotNull VideoInfo getVideoInfo(@NotNull String idOrUrl, @NotNull String country) throws IOException {
+        this.object = null;
+        this.jsonString = "";
+        NewpRequest request = new NewpRequest(idOrUrl, country);
+        this.jsonString = request.post();
+        this.object = new JSONObject(this.jsonString);
+        this.info = new VideoInfo();
+        this.info.setStatus(this.object.getInt("status"));
+        this.info.setMessage(this.object.getString("message"));
+        if (this.info.getStatus() == 1) {
             VideoInfoData data = new VideoInfoData();
-            JSONObject dataObject = object.getJSONObject("data");
+            JSONObject dataObject = this.object.getJSONObject("data");
             data.setId(dataObject.getString("id"));
             data.setTitle(dataObject.getString("title"));
             data.setDuration(dataObject.getString("duration"));
@@ -35,8 +34,8 @@ public class Info {
             data.setMp4URL(dataObject.getString("mp4"));
             data.setMp4CdnURL(dataObject.getString("mp4_cdn"));
             data.setThumbnailURL(dataObject.getString("thumbnail"));
-            info.setData(data);
+            this.info.setData(data);
         }
-        return info;
+        return this.info;
     }
 }

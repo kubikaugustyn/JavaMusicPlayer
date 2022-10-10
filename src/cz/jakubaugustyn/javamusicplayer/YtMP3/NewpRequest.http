@@ -1,0 +1,6 @@
+# @name Newp Request - YtMp3.cc (At YtPP3.com Why???)
+# Newp returns json with info about any YouTube video
+POST https://ytpp3.com/newp
+Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+
+u=https://www.youtube.com/watch?v=MzYZSooe6pM&c=USA

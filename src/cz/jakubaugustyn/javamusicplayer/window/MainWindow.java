@@ -3,17 +3,20 @@ package cz.jakubaugustyn.javamusicplayer.window;
 import cz.jakubaugustyn.javamusicplayer.Properties;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
 public class MainWindow extends Window {
+    private JMenuBar menuBar;
+    private final Border border = BorderFactory.createLineBorder(Color.black);
     public PlaceholderTextField search;
     private SearchWindow searchWindow;
 
     public MainWindow() {
         super(Properties.mainWindowName, false);
 
-        this.search = new PlaceholderTextField("");
+        this.search = new PlaceholderTextField();
         this.search.setPlaceholder(Properties.searchFieldPlaceholder);
 
         this.searchWindow = new SearchWindow(this);
@@ -25,10 +28,14 @@ public class MainWindow extends Window {
     public void build() {
         System.out.println("Build!");
         if (this.window != null) {
-            System.out.println("Everything is working correctly!");
             Container container = this.window.getContentPane();
             this.search.addActionListener(this.searchWindow);
-            container.add(this.search, BorderLayout.CENTER);
+            this.menuBar = new JMenuBar();
+            this.menuBar.setOpaque(true);
+            this.menuBar.setBorder(this.border);
+            this.menuBar.setBackground(new Color(127, 127, 127));
+            this.menuBar.add(this.search, BorderLayout.CENTER);
+            container.add(this.menuBar,BorderLayout.CENTER);
 
             JLabel textLabel = new JLabel("I'm a label in the main window", SwingConstants.LEFT);
             textLabel.setVerticalAlignment(SwingConstants.CENTER);
@@ -51,8 +58,8 @@ public class MainWindow extends Window {
 
     @Override
     public void onResize(Dimension screenSize) {
-        if (this.search != null) {
-            this.search.setSize(new Dimension(screenSize.width / (this.fullscreen ? 1 : 2), 30));
+        if (this.menuBar != null) {
+            this.menuBar.setSize(new Dimension(screenSize.width / (this.fullscreen ? 1 : 2), 30));
         }
     }
 }
